@@ -1,0 +1,25 @@
+.or_{
+    position: relative;
+    color: gray;
+    font-size: 1.2rem;
+}
+.or_::before{
+    content: '';
+    position: absolute;
+    width: 10rem;
+    left: -11rem;
+    border-bottom: 1px solid #747777;
+    bottom: 10px;
+}
+.or_::after{
+    content: '';
+    position: absolute;
+    width: 10rem;
+    right: -11rem;
+    border-bottom: 1px solid #747777;
+    bottom: 10px;
+}
+
+input[type="radio"] {
+    accent-color: green;
+}

@@ -1,0 +1,4 @@
+.home::-webkit-scrollbar{
+    width: 0.7rem;
+    background-color: grey;
+}
