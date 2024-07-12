@@ -2,15 +2,85 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { BiLogoFacebookCircle } from "react-icons/bi";
+import { toast } from 'react-toastify'
 import "./signup.css";
 
-const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
-const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const days = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
-const years = [1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+const years = [
+  1980, 1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989, 1990, 1991, 1992,
+  1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005,
+  2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018,
+  2019, 2020, 2021, 2022, 2023, 2024,
+];
 
 const Signup = () => {
+  const [userDetails, setUserDetails] = React.useState({email:"", day:"", month:"", year:"", password:"", username: "", gender: ""})
+
+  const registerUser = async (e) => {
+    e.preventDefault()
+    const index = months.indexOf(userDetails.month)
+    let DOB = `${index} - ${userDetails.day} - ${userDetails.year}`
+
+    const { email, password, gender, username } = userDetails
+
+    let d = JSON.stringify({email, password, gender, DOB, username})
+
+    const res = await fetch('https://localhost:3000/api/user/register', {
+      method: 'POST',
+      headers: {  
+        'Content-Type': 'application/json',
+        },
+        body: d
+    })
+
+    const data =  await res.json()
+    if(data.success){
+      setUserDetails({email:"", day:"", month:"", year:"", password:"", username: "", gender: ""})
+      toast.success(data.message);
+      localStorage.setItem('token', data.token)
+    }
+    else{
+      toast.error(data.message);
+    }
+  }
+
+  const onChange = (e) => {
+    setUserDetails({...userDetails, [e.target.name]: e.target.value})
+    if (e.target.name === 'gender') {
+      if(e.target.gender === 'm'){
+        setUserDetails({...userDetails, gender:'M'})
+      }
+      if(e.target.gender === 'f'){
+        setUserDetails({...userDetails, gender:'F'})
+      }
+      return 
+    }
+  }
+
   return (
     <>
       <div className="logo mx-auto bg-white">
@@ -47,7 +117,7 @@ const Signup = () => {
             </Link>
           </div>
 
-          <form className="text-center mx-auto w-3/4">
+          <form onSubmit={registerUser} className="text-center mx-auto w-3/4">
             <div className="w-4/5 mx-auto text-left py-4">
               <label
                 className="font-semibold mb-1 inline-block"
@@ -59,6 +129,8 @@ const Signup = () => {
                 type="email"
                 id="email"
                 name="email"
+                value={userDetails.email}
+                onChange={onChange}
                 placeholder="Enter your email"
                 className="bg-white block rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-[2px] focus:ring-inset focus:ring-white-600 outline-none px-2 py-3 hover:ring-white placeholder:text-gray-400 w-full"
               />
@@ -75,6 +147,8 @@ const Signup = () => {
                 type="password"
                 id="password"
                 name="password"
+                value={userDetails.password}
+                onChange={onChange}
                 placeholder="Password"
                 className="bg-white block rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-[2px] focus:ring-inset focus:ring-white-600 outline-none px-2 py-3 hover:ring-white placeholder:text-gray-400 w-full"
               />
@@ -91,10 +165,12 @@ const Signup = () => {
                 type="text"
                 id="username"
                 name="username"
+                value={userDetails.username}
+                onChange={onChange}
                 placeholder="Enter a profile name"
                 className="bg-white block rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-[2px] focus:ring-inset focus:ring-white-600 outline-none px-2 py-3 hover:ring-white placeholder:text-gray-400 w-full"
               />
-               <small className="text-md">it will appear in your profile.</small>
+              <small className="text-md">it will appear in your profile.</small>
             </div>
 
             <div className="w-4/5 mx-auto text-left py-4">
@@ -108,81 +184,98 @@ const Signup = () => {
                 <div className="w-1/4">
                   <label
                     className="font-semibold pb-1 inline-block"
-                    htmlFor="password"
+                    htmlFor="day"
                   >
                     Day
                   </label>
                   <select
                     type="text"
-                    id="password"
-                    name="password"
+                    id="day"
+                    name="day"
+                    value={userDetails.day}
+                    onChange={onChange}
                     placeholder="DD"
                     className="bg-white block rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-[2px] focus:ring-inset focus:ring-white-600 outline-none px-2 py-3 hover:ring-white placeholder:text-gray-400 w-full"
                   >
                     {days.map((d) => {
-                        return <option key={d} value={d}>{d}</option>;
+                      return (
+                        <option key={d} value={d}>
+                          {d}
+                        </option>
+                      );
                     })}
-                  </select> 
+                  </select>
                 </div>
                 <div className="w-2/4">
                   <label
                     className="font-semibold pb-1 inline-block"
-                    htmlFor="password"
+                    htmlFor="month"
                   >
                     Month
                   </label>
                   <select
                     type="text"
-                    id="password"
-                    name="password"
+                    id="month"
+                    name="month"
+                    value={userDetails.month}
+                    onChange={onChange}
                     placeholder="MM"
                     className="bg-white block rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-[2px] focus:ring-inset focus:ring-white-600 outline-none px-2 py-3 hover:ring-white placeholder:text-gray-400 w-full"
                   >
                     {months.map((m) => {
-                        return <option key={m} value={m}>{m}</option>
+                      return (
+                        <option key={m} value={m}>
+                          {m}
+                        </option>
+                      );
                     })}
                   </select>
                 </div>
                 <div className="w-1/4">
                   <label
                     className="font-semibold pb-1 inline-block"
-                    htmlFor="password"
+                    htmlFor="year"
                   >
                     Year
                   </label>
                   <select
                     type="text"
-                    id="password"
-                    name="password"
+                    id="year"
+                    name="year"
+                    value={userDetails.year}
+                    onChange={onChange}
                     placeholder="YYYY"
                     className="bg-white block rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-[2px] focus:ring-inset focus:ring-white-600 outline-none px-2 py-3 hover:ring-white placeholder:text-gray-400 w-full"
                   >
                     {years.map((y) => {
-                        return <option key={y} value={y}>{y}</option>;
+                      return (
+                        <option key={y} value={y}>
+                          {y}
+                        </option>
+                      );
                     })}
                   </select>
                 </div>
               </div>
 
-
               <div className="flex items-start justify-start gap-8 py-8">
-              <label
-                className="font-semibold mb-2 text-lg inline-block"
-                htmlFor="password"
-              >
-                What's your gender?
-              </label>
+                <label
+                  className="font-semibold mb-2 text-lg inline-block"
+                  htmlFor="gender"
+                >
+                  What's your gender?
+                </label>
                 <div className="">
                   <input
                     type="radio"
-                    id="password"
-                    name="password"
-                    placeholder="Enter a password"
-                    className=""
+                    id="m"
+                    name="gender"
+                    value={userDetails.gender}
+                    onChange={onChange}
                   />
                   <label
                     className="font-semibold ml-4 inline-block"
-                    htmlFor="password"
+                    htmlFor="m"
                   >
                     Male
                   </label>
@@ -190,14 +283,15 @@ const Signup = () => {
                 <div className="">
                   <input
                     type="radio"
-                    id="password"
+                    id="f"
                     name="password"
-                    placeholder="Enter a password"
+                    value={userDetails.gender}
+                    onChange={onChange}
                     className=""
                   />
                   <label
                     className="font-semibold ml-4 inline-block"
-                    htmlFor="password"
+                    htmlFor="f"
                   >
                     Female
                   </label>
@@ -205,22 +299,44 @@ const Signup = () => {
               </div>
             </div>
             <div className="w-4/5 mx-auto py-4 text-left">
-            <div className="flex items-center gap-2 my-4">
-                <input type="checkbox" className="green-checkbox" name="" id="" />
-                <p className="ml-2 flex flex-col items-center justify-center text-sm">I would prefer not to recieve marketing messages from Spotify</p>
-            </div>
-            <div className="flex items-center gap-2 my-4 mb-5">
-                <input type="checkbox" className="green-checkbox" name="" id="" />
-                <p className="ml-2 flex flex-col items-center justify-center text-sm">Share my regsitration data with Spotify's content providers for marketing purposes.</p>
-            </div>
+              <div className="flex items-center gap-2 my-4">
+                <input
+                  type="checkbox"
+                  className="green-checkbox"
+                  name=""
+                  id=""
+                />
+                <p className="ml-2 flex flex-col items-center justify-center text-sm">
+                  I would prefer not to recieve marketing messages from Spotify
+                </p>
+              </div>
+              <div className="flex items-center gap-2 my-4 mb-5">
+                <input
+                  type="checkbox"
+                  className="green-checkbox"
+                  name=""
+                  id=""
+                />
+                <p className="ml-2 flex flex-col items-center justify-center text-sm">
+                  Share my regsitration data with Spotify's content providers
+                  for marketing purposes.
+                </p>
+              </div>
 
-            <p className="my-4 text-base">
-                By clicking on sign up, you agree to <Link to='/' className="text-green-400">Spotify's terms and conditions of Use.</Link>
-            </p>
+              <p className="my-4 text-base">
+                By clicking on sign up, you agree to{" "}
+                <Link to="/" className="text-green-400">
+                  Spotify's terms and conditions of Use.
+                </Link>
+              </p>
 
-            <p className="my-4 text-base">
-                To learn more about how Spotify collects, uses, shares and protect your personal data please see <Link to='/' className="text-green-400">Spotify's terms and conditions of Use.</Link>
-            </p>
+              <p className="my-4 text-base">
+                To learn more about how Spotify collects, uses, shares and
+                protect your personal data please see{" "}
+                <Link to="/" className="text-green-400">
+                  Spotify's terms and conditions of Use.
+                </Link>
+              </p>
             </div>
             <div className="w-full text-left py-4">
               <input
@@ -229,7 +345,6 @@ const Signup = () => {
                 className="block font-bold cursor-pointer w-1/2 mx-auto outline-none p-3 hover:scale-105 transition-all duration-200 bg-green-500 text-black rounded-full text-center"
               />
             </div>
-
           </form>
           <div className="w-3/4 mx-auto my-4 pb-6">
             <p className="pt-4 text-gray-500 font-semibold">

@@ -6,6 +6,7 @@ import Card from '../card/Card';
 import './home.css'
 import { Link } from 'react-router-dom';
 import SongBar from '../masterBar/SongBar';
+import { FaUser } from 'react-icons/fa';
 
 export const songs = [
   {
@@ -73,7 +74,7 @@ const Home = () => {
           <GrNext className='bg-white/10 text-3xl p-1 rounded-[50%]' />
         </div>
         <div className='m-4'>
-          <Link to='/signup' className='rounded-full text-white mt-4 px-8 py-2 text-base bg-black font-semibold'>
+            <Link to='/signup' className='rounded-full text-white mt-4 px-8 py-2 text-base bg-black font-semibold'>
             Sign up
           </Link>
           <Link to='/login' className='rounded-full text-black mt-4 px-7 py-2 text-base bg-white font-semibold'>

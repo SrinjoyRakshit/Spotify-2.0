@@ -184,14 +184,14 @@ const SongBar = () => {
           <span className="text-xs">{duration}</span>
         </div>
       </div>
-      <div className="w-2/12 flex items-center gap-2">
-        <AiOutlinePlaySquare className="text-2xl" />
-        <PiMicrophoneStage className="text-2xl" />
-        <HiOutlineQueueList className="text-2xl" />
-        <BsSpeakerFill className="text-2xl" />
+      <div className="w-1/4 flex items-center gap-2">
+        <AiOutlinePlaySquare className="text-3xl" />
+        <PiMicrophoneStage className="text-3xl" />
+        <HiOutlineQueueList className="text-3xl" />
+        <BsSpeakerFill className="text-3xl" />
 
-        {volume <= 0 && <HiSpeakerXMark className="text-2xl" />}
-        {volume > 0 && <HiSpeakerWave className="text-2xl" />}
+        {volume <= 0 && <HiSpeakerXMark className="text-3xl" />}
+        {volume > 0 && <HiSpeakerWave className="text-3xl" />}
 
         <div className="relative w-full flex items-center">
           <input

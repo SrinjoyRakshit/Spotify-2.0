@@ -4,8 +4,37 @@ import { Link } from 'react-router-dom'
 import { FcGoogle } from "react-icons/fc";
 import { BiLogoFacebookCircle } from "react-icons/bi";
 import { GrApple } from "react-icons/gr";
+import { toast } from 'react-toastify';
 
 const Login = () => {
+    const [userDetails, setUserDetails] = React.useState({ password: "", username: "" })
+    
+  const loginUser = async (e) => {
+    e.preventDefault()
+    const { password, username } = userDetails
+
+    let d = JSON.stringify({ password, username})
+
+    const res = await fetch('https://localhost:3000/api/user/login', {
+      method: 'POST',
+      headers: {  
+        'Content-Type': 'application/json',
+        },
+        body: d
+    })
+
+    const data =  await res.json()
+    if(data.success){
+        toast.success(data.message);
+        localStorage.setItem('token', JSON.stringify(data.token))
+    }
+    else{
+        toast.error(data.message);
+    }
+  }
+  const onChange = (e) => {
+    setUserDetails({...userDetails, [e.target.name]: e.target.value})
+  }
   return (
     <>
         <header className='px-12 py-8'>
@@ -38,7 +67,7 @@ const Login = () => {
                 </div>
                
                <div className='border-b border-gray-800 w-3/4 mx-auto my-4'></div>
-                <form className='text-center mx-auto w-1/2'>
+                <form onSubmit={loginUser} className='text-center mx-auto w-1/2'>
                     <div className='w-full text-left py-4'>
                         <label className='font-semibold mb-2 inline-block mt-3' htmlFor="email">Email or username</label>
                         <input 
@@ -46,7 +75,9 @@ const Login = () => {
                             id='email' 
                             name='email' 
                             placeholder='Email or username'
-                            className='bg-[#1b1b1b] block rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-[3px] focus:ring-inset focus:ring-white-600 outline-none px-2 py-3 hover:ring-white placeholder:text-gray-400 w-full' 
+                            value={userDetails.username}
+                            onChange={onChange}
+                            className= 'bg-[#1b1b1b] block rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-[3px] focus:ring-inset focus:ring-white-600 outline-none px-2 py-3 hover:ring-white placeholder:text-gray-400 w-full'
                         />
                     </div>
 
@@ -57,6 +88,8 @@ const Login = () => {
                             id='password' 
                             name='password' 
                             placeholder='Password'
+                            value={userDetails.password}
+                            onChange={onChange}
                             className='bg-[#1b1b1b] block rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-[3px] focus:ring-inset focus:ring-white-600 outline-none px-2 py-3 hover:ring-white placeholder:text-gray-400 w-full' 
                         />
                     </div>
